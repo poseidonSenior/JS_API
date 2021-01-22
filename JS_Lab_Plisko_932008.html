@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<style>
+    .main {
+        max-width: 1000px;
+        margin: auto;
+        background-color: bisque;
+
+    }
+
+    .cont {
+        border: 3px solid #fff;
+        border-radius: 10px;
+        background: #fc0;
+    }
+
+    .cont:hover {
+    outline: 2px solid #000;
+   }
+
+    .d1 h1 {
+        color: #536c70;
+        text-align: center;
+    }
+
+    .d1 h1:before {
+        content: "";
+        position: absolute;
+        top: calc(50% - 1px);
+        left: 0;
+        right: 0;
+        height: 2px;
+        z-index: -1;
+    }
+
+    .d1 span {
+        padding: 0 20px;
+    }
+</style>
+
+<head>
+    <title>API Данные</title>
+</head>
+
+<body class="main">
+
+    <div class="d1">
+        <h1 id="title"><span>API Данные</span></h1>
+    </div>
+
+    <div class="cont" align = "center">
+        <input type="text" id="Txt_src" name="Txt_src" placeholder="Найти серию" value="">
+        <button type="button" onclick="URL_get()" id="button">Поиск</button>
+        <input type="hidden" id="dt" name="dt" value="">
+        <table id="table" cellspacing="1" cellpadding="1" border="solid">
+            <tr>
+                <th>#</th>
+                <th>Название</th>
+                <th>Дата начала</th>
+                <th>Дата окончания</th>
+                <th>Описание</th>
+            </tr>
+        </table>
+    </div>
+
+</body>
+
+<script>
+    function htG(URL_t) {
+        var xH = new XMLHttpRequest();
+        xH.open("GET", URL_t, false);
+        xH.send(null);
+        return xH.responseText;
+    }
+
+    function URL_get() {
+        var str = document.getElementById("Txt_src");
+        const url = 'https://api.jikan.moe/v3/search/anime?q=naruto';
+        var urlcontent = htG(url);
+        var dt = JSON.parse(urlcontent)['results'];
+
+        var table = document.getElementById("table");
+
+        var cnt = 1;
+        while (table.rows.length > 1) {
+            table.deleteRow(1);
+        }
+        for (var element of dt) {
+
+            var seriesSTR = " " + element["mal_id"] + " ";
+            if (seriesSTR.includes("" + str.value + "") == true) {
+                row = table.insertRow();
+                //Счетчик
+                var num = row.insertCell();
+                num.innerHTML = "" + cnt;
+                var num0 = row.insertCell();
+                num0.innerHTML = element["title"];
+                var num1 = row.insertCell();
+                num1.innerHTML = element["start_date"];
+                var num2 = row.insertCell();
+                num2.innerHTML = element["end_date"];
+                var num3 = row.insertCell();
+                num3.innerHTML = element["synopsis"];
+                cnt++;
+            }
+        }
+    }
+</script>
+
+</html>
